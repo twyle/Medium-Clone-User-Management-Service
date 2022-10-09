@@ -1,0 +1,40 @@
+description: Moderator Registration
+tags:
+  - Authentication
+produces:
+  - "application/json"
+parameters:
+  - name: "First Name"
+    description: "The First name"
+    required: true
+    in: "formData"
+  - name: "Last Name"
+    description: "The Last name"
+    required: true
+    in: "formData"
+    type: string
+  - name: "Email"
+    description: "The moderator email"
+    required: true
+    in: "formData"
+    type: string
+  - name: "Password"
+    description: "The moderator password"
+    required: false
+    in: "formData"
+    type: password
+  - name: "Profile Picture"
+    description: "moderator's profile picture"
+    required: false
+    in: "formData"
+    type: file
+
+responses:
+  201:
+    description: When an moderator succesfully registers.
+
+  400:
+    description: Fails to Register moderator due to bad request data
+
+  409:
+    description: Fails to Register moderator since moderator with given details exists.

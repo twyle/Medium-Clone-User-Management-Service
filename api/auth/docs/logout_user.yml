@@ -1,0 +1,22 @@
+description: User Logout
+tags:
+  - Authentication
+produces:
+  - "application/json"
+security:
+  - APIKeyHeader: [ 'Authorization' ]
+parameters:
+  - in: query
+    description: The query should contain the user id
+    required: true
+    name: 'id'
+    type: 'string'
+responses:
+  201:
+    description: When a user succesfully logs out.
+
+  400:
+    description: Fails to log-out due to bad request data
+
+  401:
+    description: Fails to Logout due to invalid credentials.
