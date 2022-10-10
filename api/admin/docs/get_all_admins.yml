@@ -1,0 +1,15 @@
+description: Get all the admins
+tags:
+  - Admin
+produces:
+  - "application/json"
+security:
+  - APIKeyHeader: [ 'Authorization' ]
+get:
+  description: Get all the admins.
+responses:
+  200:
+    description: When all admins are successfully obtained.
+
+  400:
+    description: Fails to list all admins due to bad request data

@@ -1,15 +1,10 @@
 # -*- coding: utf-8 -*-
 """This module contains all the bussiness logic for authentication and authorization."""
 from flask import  jsonify
-
-from ..models import (
-    Author,
-    Admin,
-    Moderator,
-    admin_schema,
-    author_schema,
-    moderator_schema
-)
+from ...admin import Admin, admin_schema
+from ...author import Author, author_schema
+from ...moderator import Moderator, moderator_schema
+from ...extensions import db
 
 
 def validate_user_data(user_data: dict, profile_pic):
@@ -74,8 +69,8 @@ def create_author(moderator_data: dict, profile_pic):
         Author.validate_screen_name(moderator_data['Nickname'])
         author.screen_name = moderator_data["Nickname"]
         
-    # db.session.add(author)
-    # db.session.commit()
+    db.session.add(author)
+    db.session.commit()
 
     return author_schema.dumps(author), 201
 
@@ -141,13 +136,6 @@ def create_moderator(moderator_data: dict, profile_pic):
         
     if Moderator.user_with_email_exists(moderator_data["Email Address"]):
         raise ValueError(f'The user with email address {moderator_data["Email Address"]} exists')
-    
-    admin = Admin(
-        first_name=moderator_data["First Name"],
-        last_name=moderator_data["Last Name"],
-        email_address=moderator_data["Email Address"],
-        password=moderator_data["Password"],
-    )
     
     moderator = Moderator(
         first_name=moderator_data["First Name"],

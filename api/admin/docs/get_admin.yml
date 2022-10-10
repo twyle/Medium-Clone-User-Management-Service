@@ -1,0 +1,25 @@
+description: Get an admin with a given id
+tags:
+  - Admin
+produces:
+  - "application/json"
+security:
+  - APIKeyHeader: [ 'Authorization' ]
+parameters:
+  - in: query
+    description: The query should contain the admin id
+    required: true
+    name: 'id'
+    type: 'string'
+responses:
+  200:
+    description: When an Admin is successfully obtained.
+
+  400:
+    description: Fails to get admin due to bad request data
+
+  401:
+    description: Fails to egt admin due to missing authorization headers.
+
+  422:
+    description: Fails to get admin due to missing segments in authorization header.

@@ -1,0 +1,15 @@
+description: Get all the moderators
+tags:
+  - Moderator
+produces:
+  - "application/json"
+security:
+  - APIKeyHeader: [ 'Authorization' ]
+get:
+  description: Get all the moderators.
+responses:
+  200:
+    description: When all moderators are successfully obtained.
+
+  400:
+    description: Fails to list all moderators due to bad request data

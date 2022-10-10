@@ -1,13 +1,12 @@
-from email.policy import default
-from ..extensions import db, ma, bcrypt
+from ..extensions import db, bcrypt
 from datetime import datetime
-from sqlalchemy.dialects.postgresql import ARRAY
 from .helpers import (
-    is_email_address_format_valid,
     is_user_name_valid,
     is_user_password_valid,
+    is_email_address_format_valid,
     check_if_email_id_match
 )
+
 
 class User(db.Model):
     """The User Model."""
@@ -77,100 +76,9 @@ class User(db.Model):
     @classmethod    
     def validate_user(cls, user_id, email):
         """Check if user id and email belong to the same person."""
-        check_if_email_id_match(cls, user_id, email)
-        
-
-class Author(User):
-    """The Author Model."""
-
-    __tablename__ = "authors"
+        return check_if_email_id_match(cls, user_id, email)
     
-    id: int = db.Column(db.Integer, primary_key=True)
-    bio: str = db.Column(db.Text, nullable=True)
-    interests: list = db.Column(ARRAY(db.String(100)), nullable=True)
-    follows: list = db.Column(ARRAY(db.Integer), nullable=True)
-    followers: list = db.Column(ARRAY(db.Integer), nullable=True)
-    
-    
-    @staticmethod
-    def validate_bio(name):
-        """Validate the given name."""
-        pass
-
-
-class Admin(User):
-    """The Admin Model."""
-
-    __tablename__ = "admins"
-    
-    id: int = db.Column(db.Integer, primary_key=True)
-
-    
-class Moderator(User):
-    """The Moderator Model."""
-
-    __tablename__ = "moderators"
-    
-    id: int = db.Column(db.Integer, primary_key=True)
-    bio: str = db.Column(db.Text, nullable=True)
-
-
-class AuthorSchema(ma.Schema):
-    """Show all the author information."""
-
-    class Meta:
-        """The fields to display."""
-
-        fields = (
-            "id",
-            "first_name",
-            "last_name",
-            "screen_name",
-            "email",
-            "date_registered",
-            "profile_pic",
-            "bio",
-        )
-        
-class AdminSchema(ma.Schema):
-    """Show all the admin information."""
-
-    class Meta:
-        """The fields to display."""
-
-        fields = (
-            "id",
-            "first_name",
-            "last_name",
-            "screen_name",
-            "email",
-            "date_registered",
-            "profile_pic",
-        )
-        
-class ModeratorSchema(ma.Schema):
-    """Show all the moderator information."""
-
-    class Meta:
-        """The fields to display."""
-
-        fields = (
-            "id",
-            "first_name",
-            "last_name",
-            "screen_name",
-            "email",
-            "date_registered",
-            "profile_pic",
-            "bio",
-        )
-
-
-author_schema = AuthorSchema()
-authors_schema = AuthorSchema(many=True)
-
-admin_schema = AdminSchema()
-admins_schema = AdminSchema(many=True)
-
-moderator_schema = ModeratorSchema()
-moderators_schema = ModeratorSchema(many=True)
+    @classmethod    
+    def user_active(cls, user_id):
+        """Check if account is active."""
+        return cls.query.filter_by(id=user_id).first().is_active

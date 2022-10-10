@@ -82,7 +82,7 @@ def check_if_email_id_match(cls, id: int, email: str) -> bool:
 
     user = cls.query.filter_by(id=id).first()
 
-    if user.email == email:
+    if user.email_address == email:
         return True
 
     return False

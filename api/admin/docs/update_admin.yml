@@ -1,0 +1,44 @@
+description: Update an admin's data
+tags:
+  - Admin
+consumes:
+  - "multipart/form-data"
+produces:
+  - "application/json"
+security:
+  - APIKeyHeader: [ 'Authorization' ]
+parameters:
+  - in: query
+    description: The query should contain the admin id
+    required: true
+    name: 'id'
+    type: 'string'
+  - name: "First Name"
+    description: "The First name"
+    required: false
+    in: "formData"
+    type: string
+  - name: "Last Name"
+    description: "The Last name"
+    required: false
+    in: "formData"
+    type: string
+  - name: "Email"
+    description: "The admin email"
+    required: false
+    in: "formData"
+    type: email
+  - name: "Profile Picture"
+    description: "Admin's profile picture"
+    required: false
+    in: "formData"
+    type: file
+responses:
+  200:
+    description: When an admin is successfully updated
+
+  400:
+    description: Fails to update admin due to bad request data
+
+  401:
+    description: Fails to update admin due to missing authorization headers.

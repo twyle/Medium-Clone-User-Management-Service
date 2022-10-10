@@ -1,0 +1,44 @@
+description: Update a moderator's data
+tags:
+  - Moderator
+consumes:
+  - "multipart/form-data"
+produces:
+  - "application/json"
+security:
+  - APIKeyHeader: [ 'Authorization' ]
+parameters:
+  - in: query
+    description: The query should contain the moderator id
+    required: true
+    name: 'id'
+    type: 'string'
+  - name: "First Name"
+    description: "The First name"
+    required: false
+    in: "formData"
+    type: string
+  - name: "Last Name"
+    description: "The Last name"
+    required: false
+    in: "formData"
+    type: string
+  - name: "Email"
+    description: "The moderator email"
+    required: false
+    in: "formData"
+    type: email
+  - name: "Profile Picture"
+    description: "moderator's profile picture"
+    required: false
+    in: "formData"
+    type: file
+responses:
+  200:
+    description: When an moderator is successfully updated
+
+  400:
+    description: Fails to update moderator due to bad request data
+
+  401:
+    description: Fails to update moderator due to missing Authorization headers.

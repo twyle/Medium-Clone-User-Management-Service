@@ -1,0 +1,45 @@
+description: Report the author with the given id
+tags:
+  - Report
+produces:
+  - "application/json"
+security:
+  - APIKeyHeader: [ 'Authorization' ]
+parameters:
+  - in: query
+    description: The query should contain the reporting author id
+    required: true
+    name: 'reporter id'
+    type: 'string'
+  - in: query
+    description: The query should contain the id of author being reported
+    required: true
+    name: 'reportee id'
+    type: 'string'
+  - name: body
+    description: The body should contain the reason for the report.
+    in: body
+    required: true
+    schema:
+      type: object
+      required:
+        - "reason"
+        - "comment id"
+      properties:
+        reason:
+          type: "string"
+          example: "Offensive racist comment"
+        comment id:
+          type: "string"
+          example: "1"
+responses:
+  200:
+    description: When an author is successfully reported.
+
+  400:
+    description: Fails to report an author due to bad request data
+
+  401:
+    description: Fails to report an author due to missing authorization headers.
+  422:
+    description: Fails to report an author due to missing segments in authorization header.
