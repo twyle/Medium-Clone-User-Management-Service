@@ -3,7 +3,11 @@
 from flasgger import swag_from
 from flask import Blueprint, jsonify, request
 
-from .controller import handle_create_author
+from .controller import (
+    handle_create_admin,
+    handle_create_author,
+    handle_create_moderator
+)
 
 auth = Blueprint("auth", __name__)
 
@@ -14,8 +18,7 @@ auth = Blueprint("auth", __name__)
 @auth.route("/register/admin", methods=["POST"])
 def register_admin():
     """Register an admin."""
-    return jsonify({"auth": "register admin"}), 200
-    # handle_create_admin(request.form, request.files)
+    return handle_create_admin(request.form, request.files)
 
 
 @swag_from(
@@ -25,7 +28,6 @@ def register_admin():
 def register_author():
     """Register an author."""
     return handle_create_author(request.form, request.files)
-    # return jsonify({"auth": "register author"}), 200
 
 
 @swag_from(
@@ -36,7 +38,7 @@ def register_author():
 @auth.route("/register/moderator", methods=["POST"])
 def register_moderator():
     """Register a moderator."""
-    return jsonify({"auth": "register moderator"}), 200
+    return handle_create_moderator(request.form, request.files)
 
 
 @auth.route("/reset_password", methods=["POST"])

@@ -13,7 +13,7 @@ parameters:
     required: true
     in: "formData"
     type: string
-  - name: "Email"
+  - name: "Email Address"
     description: "The moderator email"
     required: true
     in: "formData"
@@ -23,6 +23,11 @@ parameters:
     required: false
     in: "formData"
     type: password
+  - name: "Bio"
+    description: "The author's bio"
+    required: false
+    in: "formData"
+    type: string
   - name: "Profile Picture"
     description: "moderator's profile picture"
     required: false

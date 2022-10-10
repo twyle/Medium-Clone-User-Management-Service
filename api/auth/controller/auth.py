@@ -2,66 +2,77 @@
 """This module contains all the bussiness logic for authentication and authorization."""
 from flask import  jsonify
 
-from ..models import Author, author_schema
-from ...extensions import db
+from ..models import (
+    Author,
+    Admin,
+    Moderator,
+    admin_schema,
+    author_schema,
+    moderator_schema
+)
 
 
-
-def create_author(author_data: dict, profile_pic):
-    """Handle the post request to create a new author."""
-    if not author_data:
+def validate_user_data(user_data: dict, profile_pic):
+    """Validate user data."""
+    if not user_data:
         raise ValueError("The authors data must be provided!")
-    if not isinstance(author_data, dict):
+    if not isinstance(user_data, dict):
         raise ValueError("The author data must be a dictionary!")
     valid_keys = [
         "First Name",
         "Last Name",
         "Email Address",
-        "Bio",
         "Nickname",
         "Password",
     ]
-    for key in author_data.keys():
+    for key in user_data.keys():
         if key not in valid_keys:
             raise ValueError(f"The only valid keys are {valid_keys}")
-    if "First Name" not in author_data.keys():
+    if "First Name" not in user_data.keys():
         raise ValueError("The First Name must be provided")
-    if "Last Name" not in author_data.keys():
+    if "Last Name" not in user_data.keys():
         raise ValueError("The Last Name must be provided")
-    if not author_data["First Name"]:
+    if not user_data["First Name"]:
         raise ValueError("The First Name must be provided")
-    if not author_data["Last Name"]:
+    if not user_data["Last Name"]:
         raise ValueError("The Last Name must be provided")
-    if "Password" not in author_data.keys():
+    if "Password" not in user_data.keys():
         raise ValueError("The password must be provided!")
-    if not author_data["Password"]:
+    if not user_data["Password"]:
         raise ValueError("The password must be provided!")
-    if "Email Address" not in author_data.keys():
+    if "Email Address" not in user_data.keys():
         raise ValueError("The Emai address must be provide!")
-    if not author_data["Email Address"]:
+    if not user_data["Email Address"]:
         raise ValueError("The Email address must be provide!")
-    Author.validate_name(author_data['First Name'])
-    Author.validate_name(author_data['Last Name'])
-    Author.validate_email(author_data['Email Address'])
-    Author.validate_password(author_data['Password'])
-        
-    if Author.user_with_email_exists(author_data["Email Address"]):
-        raise ValueError(f'The user with email address {author_data["Email Address"]} exists')
+    
 
+def create_author(moderator_data: dict, profile_pic):
+    """Handle the post request to create a new author."""
+    
+    validate_user_data(moderator_data, profile_pic)
+    
+    Author.validate_name(moderator_data['First Name'])
+    Author.validate_name(moderator_data['Last Name'])
+    Author.validate_email(moderator_data['Email Address'])
+    Author.validate_password(moderator_data['Password'])
+        
+    if Author.user_with_email_exists(moderator_data["Email Address"]):
+        raise ValueError(f'The user with email address {moderator_data["Email Address"]} exists')
+    
     author = Author(
-        first_name=author_data["First Name"],
-        last_name=author_data["Last Name"],
-        email_address=author_data["Email Address"],
-        password=author_data["Password"],
+        first_name=moderator_data["First Name"],
+        last_name=moderator_data["Last Name"],
+        email_address=moderator_data["Email Address"],
+        password=moderator_data["Password"],
     )
 
-    if 'Bio' in author_data.keys():
-        Author.validate_bio(author_data["Bio"])
-        author.bio = author_data["Bio"]
+    if 'Bio' in moderator_data.keys():
+        Author.validate_bio(moderator_data["Bio"])
+        author.bio = moderator_data["Bio"]
         
-    if 'Nickname' in author_data.keys():
-        Author.validate_screen_name(author_data['Nickname'])
-        author.screen_name = author_data["Nickname"]
+    if 'Nickname' in moderator_data.keys():
+        Author.validate_screen_name(moderator_data['Nickname'])
+        author.screen_name = moderator_data["Nickname"]
         
     # db.session.add(author)
     # db.session.commit()
@@ -69,11 +80,102 @@ def create_author(author_data: dict, profile_pic):
     return author_schema.dumps(author), 201
 
 
-def handle_create_author(author_data: dict, profile_pic):
+def handle_create_author(moderator_data: dict, profile_pic):
     """Handle the post request to create a new author."""
     try:
-        author = create_author(author_data, profile_pic)
+        author = create_author(moderator_data, profile_pic)
     except (ValueError, TypeError) as e:
         return jsonify({"error": str(e)}), 400
     else:
         return author
+    
+def create_admin(admin_data: dict, profile_pic):
+    """Handle the post request to create a new Admin."""
+    
+    validate_user_data(admin_data, profile_pic)
+    
+    Admin.validate_name(admin_data['First Name'])
+    Admin.validate_name(admin_data['Last Name'])
+    Admin.validate_email(admin_data['Email Address'])
+    Admin.validate_password(admin_data['Password'])
+        
+    if Admin.user_with_email_exists(admin_data["Email Address"]):
+        raise ValueError(f'The user with email address {admin_data["Email Address"]} exists')
+    
+    admin = Admin(
+        first_name=admin_data["First Name"],
+        last_name=admin_data["Last Name"],
+        email_address=admin_data["Email Address"],
+        password=admin_data["Password"],
+    )
+
+        
+    if 'Nickname' in admin_data.keys():
+        Admin.validate_screen_name(admin_data['Nickname'])
+        admin.screen_name = admin_data["Nickname"]
+        
+    # db.session.add(Admin)
+    # db.session.commit()
+
+    return admin_schema.dumps(admin), 201
+    
+def handle_create_admin(admin_data: dict, profile_pic):
+    """Handle the post request to create a new Moderator."""
+    try:
+        admin = create_admin(admin_data, profile_pic)
+    except (ValueError, TypeError) as e:
+        return jsonify({"error": str(e)}), 400
+    else:
+        return admin
+    
+    
+def create_moderator(moderator_data: dict, profile_pic):
+    """Handle the post request to create a new Moderator."""
+    
+    validate_user_data(moderator_data, profile_pic)
+    
+    Moderator.validate_name(moderator_data['First Name'])
+    Moderator.validate_name(moderator_data['Last Name'])
+    Moderator.validate_email(moderator_data['Email Address'])
+    Moderator.validate_password(moderator_data['Password'])
+        
+    if Moderator.user_with_email_exists(moderator_data["Email Address"]):
+        raise ValueError(f'The user with email address {moderator_data["Email Address"]} exists')
+    
+    admin = Admin(
+        first_name=moderator_data["First Name"],
+        last_name=moderator_data["Last Name"],
+        email_address=moderator_data["Email Address"],
+        password=moderator_data["Password"],
+    )
+    
+    moderator = Moderator(
+        first_name=moderator_data["First Name"],
+        last_name=moderator_data["Last Name"],
+        email_address=moderator_data["Email Address"],
+        password=moderator_data["Password"]
+    )
+        
+    if 'Nickname' in moderator_data.keys():
+        print('Got here!!1')
+        Moderator.validate_screen_name(moderator_data['Nickname'])
+        moderator.screen_name = moderator_data["Nickname"]
+        
+    if 'Bio' in moderator_data.keys():
+        Moderator.validate_bio(moderator_data["Bio"])
+        moderator.bio = moderator_data["Bio"]
+        
+    # db.session.add(moderator)
+    # db.session.commit()
+
+    return moderator_schema.dumps(moderator), 201
+
+    
+def handle_create_moderator(moderator_data: dict, profile_pic):
+    """Handle the post request to create a new Moderator."""
+    try:
+        moderator = create_moderator(moderator_data, profile_pic)
+    except (ValueError, TypeError) as e:
+        return jsonify({"error": str(e)}), 400
+    else:
+        return moderator

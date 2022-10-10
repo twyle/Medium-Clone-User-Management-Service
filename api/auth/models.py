@@ -104,7 +104,6 @@ class Admin(User):
     __tablename__ = "admins"
     
     id: int = db.Column(db.Integer, primary_key=True)
-    screen_name: str = db.Column(db.String(100), nullable=True)
 
     
 class Moderator(User):
@@ -132,7 +131,46 @@ class AuthorSchema(ma.Schema):
             "profile_pic",
             "bio",
         )
+        
+class AdminSchema(ma.Schema):
+    """Show all the admin information."""
+
+    class Meta:
+        """The fields to display."""
+
+        fields = (
+            "id",
+            "first_name",
+            "last_name",
+            "screen_name",
+            "email",
+            "date_registered",
+            "profile_pic",
+        )
+        
+class ModeratorSchema(ma.Schema):
+    """Show all the moderator information."""
+
+    class Meta:
+        """The fields to display."""
+
+        fields = (
+            "id",
+            "first_name",
+            "last_name",
+            "screen_name",
+            "email",
+            "date_registered",
+            "profile_pic",
+            "bio",
+        )
 
 
 author_schema = AuthorSchema()
 authors_schema = AuthorSchema(many=True)
+
+admin_schema = AdminSchema()
+admins_schema = AdminSchema(many=True)
+
+moderator_schema = ModeratorSchema()
+moderators_schema = ModeratorSchema(many=True)
