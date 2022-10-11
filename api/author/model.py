@@ -18,9 +18,19 @@ class Author(User):
     
     
     @staticmethod
-    def validate_bio(name):
+    def validate_bio(bio: str):
         """Validate the given name."""
         pass
+    
+    @classmethod
+    def get_followers(cls, author_id: int):
+        """Get the authors followers."""
+        return cls.query.filter_by(id=author_id).first().followers
+    
+    @classmethod
+    def get_follows(cls, author_id: int):
+        """Get the authors follows."""
+        return cls.query.filter_by(id=author_id).first().follows
     
 
 class AuthorSchema(ma.Schema):

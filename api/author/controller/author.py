@@ -106,3 +106,46 @@ def handle_update_author(author_id: str, author_data: dict, profile_pic):
         return jsonify({"error": str(e)}), 400
     else:
         return author
+
+
+def get_author_followers(author_id: str) -> dict:
+    """Get the authors followers."""
+    if not author_id:
+        raise ValueError("The author_id has to be provided.")
+    if not isinstance(author_id, str):
+        raise TypeError("The author_id has to be a string.")
+    if not Author.user_with_id_exists(int(author_id)):
+        raise ValueError(f"The user with id {author_id} does not exist.")
+
+    return jsonify({'followers': Author.get_followers(int(author_id))}), 200   
+
+    
+def handle_get_author_followers(author_id: str):
+    """Get an author's followers."""
+    try:
+        author_followers = get_author_followers(author_id)
+    except (ValueError, TypeError) as e:
+        return jsonify({"error": str(e)}), 400
+    else:
+        return author_followers
+
+def get_author_follows(author_id: str) -> dict:
+    """Get the authors follows."""
+    if not author_id:
+        raise ValueError("The author_id has to be provided.")
+    if not isinstance(author_id, str):
+        raise TypeError("The author_id has to be a string.")
+    if not Author.user_with_id_exists(int(author_id)):
+        raise ValueError(f"The user with id {author_id} does not exist.")
+
+    return jsonify({'followers': Author.get_follows(int(author_id))}), 200   
+
+    
+def handle_get_author_follows(author_id: str):
+    """Get an author's follows."""
+    try:
+        author_follows = get_author_follows(author_id)
+    except (ValueError, TypeError) as e:
+        return jsonify({"error": str(e)}), 400
+    else:
+        return author_follows

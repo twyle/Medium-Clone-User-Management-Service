@@ -6,7 +6,9 @@ from .controller import (
     handle_list_authors,
     handle_delete_author,
     handle_get_author,
-    handle_update_author
+    handle_update_author,
+    handle_get_author_followers,
+    handle_get_author_follows
 )
 
 author = Blueprint("author", __name__)
@@ -40,6 +42,20 @@ def delete_author():
 def follow_author():
     """Follow the author with given id."""
     return jsonify({"author": "follow"}), 200
+
+
+@swag_from("./docs/author_followers.yml", endpoint="author.get_followers", methods=["GET"])
+@author.route("/followers", methods=["GET"])
+def get_followers():
+    """Get author's followers."""
+    return handle_get_author_followers(request.args.get('id'))
+
+
+@swag_from("./docs/author_follows.yml", endpoint="author.get_follows", methods=["GET"])
+@author.route("/follows", methods=["GET"])
+def get_follows():
+    """Get author follows."""
+    return handle_get_author_follows(request.args.get('id'))
 
 
 @swag_from(
