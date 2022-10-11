@@ -33,7 +33,7 @@ class AuthorSchema(ma.Schema):
             "id",
             "first_name",
             "last_name",
-            "nick_name",
+            "screen_name",
             "email_address",
             "date_registered",
             "profile_picture",

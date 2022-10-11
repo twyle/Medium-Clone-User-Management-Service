@@ -82,3 +82,22 @@ class User(db.Model):
     def user_active(cls, user_id):
         """Check if account is active."""
         return cls.query.filter_by(id=user_id).first().is_active
+    
+    @classmethod    
+    def all_users(cls):
+        """List all users."""
+        return cls.query.all()
+    
+    @classmethod    
+    def delete_user(cls, user_id: int):
+        """Delete a user."""
+        user = cls.query.filter_by(id=user_id).first()
+        # db.session.delete(user)
+        # db.session.commit()
+        return user
+    
+    @classmethod    
+    def get_user(cls, user_id: int):
+        """Get a user."""
+        user = cls.query.filter_by(id=user_id).first()
+        return user

@@ -1,7 +1,13 @@
 # -*- coding: utf-8 -*-
 """This module contains all the author routes."""
 from flasgger import swag_from
-from flask import Blueprint, jsonify
+from flask import Blueprint, jsonify, request
+from .controller import (
+    handle_list_authors,
+    handle_delete_author,
+    handle_get_author,
+    handle_update_author
+)
 
 author = Blueprint("author", __name__)
 
@@ -10,14 +16,14 @@ author = Blueprint("author", __name__)
 @author.route("/", methods=["GET"])
 def get_author():
     """Get a an author by id."""
-    return jsonify({"author": "get"}), 200
+    return handle_get_author(request.args.get('id'))
 
 
 @swag_from("./docs/update_author.yml", endpoint="author.update_author", methods=["PUT"])
 @author.route("/", methods=["PUT"])
 def update_author():
     """Update the author with given id."""
-    return jsonify({"author": "update"}), 200
+    return handle_update_author(request.args.get("id"), request.form, request.files)
 
 
 @swag_from(
@@ -26,7 +32,7 @@ def update_author():
 @author.route("/", methods=["DELETE"])
 def delete_author():
     """Delete the author with given id."""
-    return jsonify({"author": "delete"}), 200
+    return handle_delete_author(request.args.get('id'))
 
 
 @swag_from("./docs/follow_author.yml", endpoint="author.follow_author", methods=["GET"])
@@ -42,4 +48,4 @@ def follow_author():
 @author.route("/authors", methods=["GET"])
 def get_all_authors():
     """List all authors."""
-    return jsonify({"author": "all"}), 200
+    return handle_list_authors()
