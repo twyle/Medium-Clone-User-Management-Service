@@ -4,7 +4,9 @@ from .author import (
     handle_get_author,
     handle_update_author,
     handle_get_author_followers,
-    handle_get_author_follows
+    handle_get_author_follows,
+    handle_follow_author,
+    handle_unfollow_author
 )
 
 __all__ = [
@@ -13,5 +15,7 @@ __all__ = [
     'handle_get_author',
     'handle_update_author',
     'handle_get_author_followers',
-    'handle_get_author_follows'
+    'handle_get_author_follows',
+    'handle_follow_author',
+    'handle_unfollow_author'
 ]
