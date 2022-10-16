@@ -76,8 +76,8 @@ def create_admin(admin_data: dict, profile_pic):
         Admin.validate_screen_name(admin_data['Nickname'])
         admin.screen_name = admin_data["Nickname"]
         
-    # db.session.add(Admin)
-    # db.session.commit()
+    db.session.add(admin)
+    db.session.commit()
 
     return admin_schema.dumps(admin), 201
     
@@ -120,8 +120,8 @@ def create_moderator(moderator_data: dict, profile_pic):
         Moderator.validate_bio(moderator_data["Bio"])
         moderator.bio = moderator_data["Bio"]
         
-    # db.session.add(moderator)
-    # db.session.commit()
+    db.session.add(moderator)
+    db.session.commit()
 
     return moderator_schema.dumps(moderator), 201
 

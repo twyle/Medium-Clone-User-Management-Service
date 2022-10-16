@@ -5,7 +5,7 @@ from ..extensions import db, ma
 
 
 class Moderator(User):
-    """The Moderator Model."""
+    """The Moderator Model.""" 
 
     __tablename__ = "moderators"
     

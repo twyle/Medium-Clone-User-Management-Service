@@ -1,0 +1,21 @@
+description: Get the reports
+tags:
+  - Report
+produces:
+  - "application/json"
+security:
+  - APIKeyHeader: [ 'Authorization' ]
+parameters:
+  - in: query
+    description: The query should contain the author id
+    required: false
+    name: 'reporter id'
+    type: 'string'
+get:
+  description: Get reports.
+responses:
+  200:
+    description: When all authors are successfully obtained.
+
+  400:
+    description: Fails to list all authors due to bad request data

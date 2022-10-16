@@ -24,14 +24,10 @@ parameters:
       type: object
       required:
         - "reason"
-        - "comment id"
       properties:
         reason:
           type: "string"
           example: "Offensive racist comment"
-        comment id:
-          type: "string"
-          example: "1"
 responses:
   200:
     description: When an author is successfully reported.
