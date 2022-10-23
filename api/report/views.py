@@ -2,15 +2,15 @@
 """This module contains all the routes used to report offensive reports and reports."""
 from flasgger import swag_from
 from flask import Blueprint, request
-from .controller import handle_report_author, handle_get_reports
+from .controller import handle_report_author, handle_get_reports, token_required
 
 report = Blueprint("report", __name__)
 
-
+@report.route("/author", methods=["POST"])
+@token_required
 @swag_from(
     "./docs/report_author.yml", endpoint="report.report_author", methods=["POST"]
 )
-@report.route("/author", methods=["POST"])
 def report_author():
     """Report Author with given id."""
     return handle_report_author(request.args.get('reporter id'), request.args.get('reportee id'), request.json)

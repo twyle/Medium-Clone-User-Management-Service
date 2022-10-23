@@ -31,8 +31,8 @@ def report_author(reporter_id: str, reportee_id: str, reason: str):
         raise ValueError(f'The author with id {reportee_id} does not exist!')
     
     report = Report(reporter_id=reporter_id, reportee_id=reportee_id, reason=reason['reason'])
-    db.session.add(report)
-    db.session.commit()
+    # db.session.add(report)
+    # db.session.commit()
     
     return report_schema.dump(report), 201
 

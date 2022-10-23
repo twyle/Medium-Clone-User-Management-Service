@@ -6,7 +6,8 @@ from flask import Blueprint, jsonify, request
 from .controller import (
     handle_create_admin,
     handle_create_author,
-    handle_create_moderator
+    handle_create_moderator,
+    handle_log_in_user
 )
 
 auth = Blueprint("auth", __name__)
@@ -53,8 +54,7 @@ def reset_password():
 @auth.route("/login", methods=["POST"])
 @swag_from("./docs/login_user.yml", endpoint="auth.login", methods=["POST"])
 def login():
-    # return handle_log_in_user(request.args.get("id"), request.json)
-    return jsonify({"Hello": "You are logged in"})
+    return handle_log_in_user(request.args.get("id"), request.json) 
 
 
 @auth.route("/logout", methods=["POST"])
