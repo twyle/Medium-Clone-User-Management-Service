@@ -1,4 +1,4 @@
-from ..extensions import db, bcrypt
+from ..extensions import db, bcrypt, ma
 from datetime import datetime
 from .helpers import (
     is_user_name_valid,
@@ -101,3 +101,23 @@ class User(db.Model):
         """Get a user."""
         user = cls.query.filter_by(id=user_id).first()
         return user
+    
+class UserSchema(ma.Schema):
+    """Show all the user information."""
+
+    class Meta:
+        """The fields to display."""
+
+        fields = (
+            "id",
+            "first_name",
+            "last_name",
+            "screen_name",
+            "email_address",
+            "date_registered",
+            "profile_picture",
+            "bio",
+        )
+
+user_schema = UserSchema()
+users_schema = UserSchema(many=True)

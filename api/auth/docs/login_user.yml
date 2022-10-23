@@ -9,6 +9,12 @@ parameters:
     required: true
     name: 'id'
     type: 'string'
+  - in: query
+    description: The query should contain the user's role
+    required: true
+    name: 'role'
+    type: 'string'
+    enum: [ "author", "admin", "moderator"]
   - name: body
     description: The body should contain the User Login data
     in: body

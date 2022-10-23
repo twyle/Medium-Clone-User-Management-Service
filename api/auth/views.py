@@ -54,7 +54,8 @@ def reset_password():
 @auth.route("/login", methods=["POST"])
 @swag_from("./docs/login_user.yml", endpoint="auth.login", methods=["POST"])
 def login():
-    return handle_log_in_user(request.args.get("id"), request.json) 
+    print(request.args.get("role"))
+    return handle_log_in_user(request.args.get("id"), request.args.get("role"), request.json) 
 
 
 @auth.route("/logout", methods=["POST"])

@@ -8,6 +8,7 @@ from ...extensions import db
 from ...helpers.blueprint_helpers import validate_user_data
 import json
 import jwt
+from ...models.models import user_schema
     
 
 def create_author(moderator_data: dict, profile_pic):
@@ -148,61 +149,72 @@ def handle_create_moderator(moderator_data: dict, profile_pic):
     else:
         return moderator
     
-def log_in_user(user_id: str, user_data: dict):
+def log_in_user(user_id: str, role: str, user_data: dict):
     """Log in a registered user."""
+    cls = None
+    if not role:
+        raise ValueError("The user role has to be provided!")
+    if not isinstance(role, str):
+        raise TypeError("The user role has to be a string")
     if not user_id:
-        raise ValueError("The user id has to be provided!")
+        raise ValueError(f"The {role} id has to be provided!")
     if not isinstance(user_id, str):
-        raise TypeError("The user id has to be a string")
-    if not Author.user_with_id_exists(int(user_id)):
-        raise ValueError(f"There is no user with id {user_id}")
+        raise TypeError(f"The {role} id has to be a string")
+    if role == 'author':
+        cls = Author
+    elif role == 'admin':
+        cls = Admin
+    else:
+        cls = Moderator
+    if not cls.user_with_id_exists(int(user_id)):
+        raise ValueError(f"There is no {role} with id {user_id}")
     if not user_data:
-        raise ValueError("The user data cannot be empty.")
+        raise ValueError(f"The {role} data cannot be empty.")
 
     if not isinstance(user_data, dict):
         raise TypeError("user_data must be a dict")
 
     if "email" not in user_data.keys():
-        raise ValueError("The email is missing from the admin data")
+        raise ValueError(f"The email is missing from the {role} data")
 
     if not user_data["email"]:
-        raise ValueError("The email data is missing")
+        raise ValueError(f"The email data for {role} is missing")
 
     if "password" not in user_data.keys():
-        raise ValueError("The password is missing from the admin data")
+        raise ValueError(f"The password is missing from the {role} data")
 
     if not user_data["password"]:
         raise ValueError("The password data is missing")
 
-    if not Author.user_with_email_exists(user_data["email"]):
+    if not cls.user_with_email_exists(user_data["email"]):
         raise ValueError(
-            f'The user with email {user_data["email"]} does not exist!'
+            f'The {role} with email {user_data["email"]} does not exist!'
         )
 
-    if not Author.validate_user(int(user_id), user_data["email"]):
+    if not cls.validate_user(int(user_id), user_data["email"]):
         raise ValueError(
-            f'The user with email {user_data["email"]} and id {user_id} does not exist!'
+            f'The {role} with email {user_data["email"]} and id {user_id} does not exist!'
         )
 
-    user = Author.query.filter_by(email_address=user_data["email"]).first()
+    user = cls.query.filter_by(email_address=user_data["email"]).first()
     if user:
         if user.check_password(user_data["password"]):
             if not user.is_active:
                 user_data = {
-                    "user profile": json.loads(author_schema.dumps(user)),
+                    f"{role} profile": json.loads(user_schema.dumps(user)),
                     "access token": create_access_token(user.id, 1),
                     "refresh token": create_refresh_token(user.id, 1),
                 }
 
                 return user_data
             raise ValueError("This account has not been activate.")
-        raise ValueError("The author password is invalid!")
+        raise ValueError(f"The {role} password is invalid!")
 
 
-def handle_log_in_user(user_id: str, user_data: dict) -> dict:
+def handle_log_in_user(user_id: str, role: str, user_data: dict) -> dict:
     """Handle a POST request to log in an admin."""
     try:
-        data = log_in_user(user_id, user_data)
+        data = log_in_user(user_id, role, user_data)
     except (
         ValueError,
         TypeError
