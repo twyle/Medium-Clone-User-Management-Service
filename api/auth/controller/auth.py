@@ -9,6 +9,8 @@ from ...helpers.blueprint_helpers import validate_user_data
 import json
 import jwt
 from ...models.models import user_schema
+import datetime
+from ..models import BlacklistToken
     
 
 def create_author(moderator_data: dict, profile_pic):
@@ -129,15 +131,27 @@ def create_moderator(moderator_data: dict, profile_pic):
     return moderator_schema.dumps(moderator), 201
 
 
-def create_access_token(user_id: int, role_id: int):
+def create_access_token(user_id: int, role: str):
     """Create the access token"""
-    access_token = jwt.encode({'public_id': user_id}, current_app.config['SECRET_KEY'], 'HS256')
+    print(datetime.datetime.now() + datetime.timedelta(seconds=30))
+    access_token = jwt.encode(
+        {'public_id': user_id, 'role': role}, 
+        current_app.config['JWT_SECRET_KEY'], 
+        'HS256', 
+        {'exp': str(datetime.datetime.now() + datetime.timedelta(seconds=30))}
+    )
     return access_token
 
 
-def create_refresh_token(user_id: int, role_id: int):
+def create_refresh_token(user_id: int, role: str):
     """Create the refresh token"""
-    return 'refresh-token'
+    refresh_token = jwt.encode(
+        {'public_id': user_id, 'role': role}, 
+        current_app.config['JWT_SECRET_KEY'], 
+        'HS256', 
+        {'exp': str(datetime.datetime.now() + datetime.timedelta(seconds=60))}
+    )
+    return refresh_token
 
     
 def handle_create_moderator(moderator_data: dict, profile_pic):
@@ -202,8 +216,8 @@ def log_in_user(user_id: str, role: str, user_data: dict):
             if not user.is_active:
                 user_data = {
                     f"{role} profile": json.loads(user_schema.dumps(user)),
-                    "access token": create_access_token(user.id, 1),
-                    "refresh token": create_refresh_token(user.id, 1),
+                    "access token": create_access_token(user.id, role),
+                    "refresh token": create_refresh_token(user.id, role),
                 }
 
                 return user_data
@@ -222,3 +236,55 @@ def handle_log_in_user(user_id: str, role: str, user_data: dict) -> dict:
         return jsonify({"error": str(e)}), 400
     else:
         return data, 200
+    
+    
+def save_token(token):
+    blacklist_token = BlacklistToken(token=token)
+    try:
+        # insert the token
+        db.session.add(blacklist_token)
+        db.session.commit()
+        response_object = {
+            'status': 'success',
+            'message': 'Successfully logged out.'
+        }
+        return response_object, 200
+    except Exception as e:
+        response_object = {
+            'status': 'fail',
+            'message': str(e)
+        }
+        return response_object, 200
+
+
+def logout_user(user_id: str, role: str, token: str) -> dict:
+    """Log out a user."""
+    cls = None
+    if not role:
+        raise ValueError("The user role must be provided!")
+    if not isinstance(role, str):
+        raise TypeError("The user role must be a string")
+    if not user_id:
+        raise ValueError(f"The {role} id must be provided!")
+    if not isinstance(user_id, str):
+        raise TypeError(f"The {role} id must be a string")
+    if role == 'author':
+        cls = Author
+    elif role == 'admin':
+        cls = Admin
+    else:
+        cls = Moderator
+    if not cls.user_with_id_exists(int(user_id)):
+        raise ValueError(f"The {role} with id {user_id} does not exist1")
+    print('got here')
+    return save_token(token)
+
+
+def handle_logout_user(user_id: str, role: str, token: str) -> dict:
+    """Log out a logged in user."""
+    try:
+        log_out_data = logout_user(user_id, role, token)
+    except (ValueError, TypeError) as e:
+        return jsonify({"error": str(e)}), 400
+    else:
+        return log_out_data

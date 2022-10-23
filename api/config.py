@@ -3,6 +3,7 @@
 import os
 
 from dotenv import load_dotenv
+from datetime import timedelta
 
 load_dotenv()
 
@@ -11,6 +12,14 @@ class BaseConfig:
     """Base configuration."""
 
     SECRET_KEY = os.getenv("SECRET_KEY", "secret_key")
+    JWT_SECRET_KEY = "super-secret-key"
+    JWT_ACCESS_TOKEN_EXPIRES = timedelta(
+        seconds=int(os.getenv("JWT_ACCESS_TOKEN_EXPIRES", "60"))
+    )
+    JWT_REFRESH_TOKEN_EXPIRES = timedelta(
+        seconds=int(os.getenv("JWT_REFRESH_TOKEN_EXPIRES", "60"))
+    )
+    
     DEBUG = False
     TESTING = False
     BASE_DIR = os.path.abspath(os.path.dirname(__file__))

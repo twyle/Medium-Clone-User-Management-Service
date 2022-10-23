@@ -18,7 +18,9 @@ def token_required(f):
             return make_response(jsonify({"message": "A valid token is missing!"}), 401)
         try:
             # decode the token to obtain user public_id
-            data = jwt.decode(token, current_app.config['SECRET_KEY'], algorithms=['HS256'])
+            data = jwt.decode(token, current_app.config['JWT_SECRET_KEY'], algorithms=['HS256'])
+            if data['role'] != 'author':
+                return make_response(jsonify({'error': 'Only authors can report other authors!'}), 401)
             current_author = Author.query.filter_by(id=data['public_id']).first()
         except Exception as e:
             return make_response(jsonify({"message": str(e)}), 401)

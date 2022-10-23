@@ -7,7 +7,8 @@ from .controller import (
     handle_create_admin,
     handle_create_author,
     handle_create_moderator,
-    handle_log_in_user
+    handle_log_in_user, 
+    handle_logout_user
 )
 
 auth = Blueprint("auth", __name__)
@@ -54,16 +55,15 @@ def reset_password():
 @auth.route("/login", methods=["POST"])
 @swag_from("./docs/login_user.yml", endpoint="auth.login", methods=["POST"])
 def login():
-    print(request.args.get("role"))
     return handle_log_in_user(request.args.get("id"), request.args.get("role"), request.json) 
 
 
 @auth.route("/logout", methods=["POST"])
 @swag_from("./docs/logout_user.yml", endpoint="auth.logout", methods=["POST"])
 def logout():
-    # nullify the access token
-    # return handle_logout_user(request.args.get("id"))
-    return jsonify({"Hello": "You are logged out"})
+    token = request.headers.get('Authorization').split()[1]
+    print(token)
+    return handle_logout_user(request.args.get("id"), request.args.get("role"), token)
 
 
 @auth.route("/refresh_token", methods=["POST"])

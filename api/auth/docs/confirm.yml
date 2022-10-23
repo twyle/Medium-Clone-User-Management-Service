@@ -1,4 +1,4 @@
-description: Confirm the email address
+description: Confirm the email address 
 tags:
   - Authentication
 produces:
@@ -10,6 +10,12 @@ parameters:
     name: 'id'
     type: 'string'
     example: "1"
+  - in: query
+    description: The query should contain the user's role
+    required: true
+    name: 'role'
+    type: 'string'
+    enum: [ "author", "admin", "moderator"]
   - in: query
     description: The query should contain the email confirm token
     required: true
