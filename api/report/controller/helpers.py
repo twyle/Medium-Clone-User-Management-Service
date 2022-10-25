@@ -5,6 +5,7 @@ from functools import wraps
 from flask import make_response, request, jsonify, current_app
 import jwt
 from ...author.model import Author
+from ...auth.models import BlacklistToken
 
 # Authentication decorator
 def token_required(f):
@@ -22,6 +23,8 @@ def token_required(f):
             if data['role'] != 'author':
                 return make_response(jsonify({'error': 'Only authors can report other authors!'}), 401)
             current_author = Author.query.filter_by(id=data['public_id']).first()
+            if BlacklistToken.check_blacklist(token):
+                return make_response(jsonify({"message": "Invalid token!"}), 401)
         except Exception as e:
             return make_response(jsonify({"message": str(e)}), 401)
          # Return the user information attached to the token

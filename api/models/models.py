@@ -92,15 +92,15 @@ class User(db.Model):
     def delete_user(cls, user_id: int):
         """Delete a user."""
         user = cls.query.filter_by(id=user_id).first()
-        # db.session.delete(user)
-        # db.session.commit()
+        db.session.delete(user)
+        db.session.commit()
         return user
     
     @classmethod    
     def get_user(cls, user_id: int):
         """Get a user."""
         user = cls.query.filter_by(id=user_id).first()
-        return user
+        return user 
     
 class UserSchema(ma.Schema):
     """Show all the user information."""

@@ -23,7 +23,7 @@ parameters:
     required: false
     in: "formData"
     type: string
-  - name: "Email"
+  - name: "Email Address"
     description: "The admin email"
     required: false
     in: "formData"

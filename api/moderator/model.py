@@ -11,6 +11,11 @@ class Moderator(User):
     
     id: int = db.Column(db.Integer, primary_key=True)
     bio: str = db.Column(db.Text, nullable=True)
+    
+    @staticmethod
+    def validate_bio(bio: str):
+        """Validate the given name."""
+        pass
 
 class ModeratorSchema(ma.Schema):
     """Show all the moderator information."""

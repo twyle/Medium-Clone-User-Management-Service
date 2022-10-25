@@ -11,6 +11,13 @@ class Suspend(db.Model):
     author_id: int = db.Column(db.Integer, db.ForeignKey('authors.id'))
     reason: str = db.Column(db.Text, nullable=False)
     date_suspended: datetime = db.Column(db.DateTime, default=datetime.utcnow)
+    
+    @staticmethod
+    def is_suspended(author_id):
+        author = Suspend.query.filter_by(author_id=author_id).first()
+        if author:
+            return True
+        return False
 
 
 class SuspendSchema(ma.Schema):

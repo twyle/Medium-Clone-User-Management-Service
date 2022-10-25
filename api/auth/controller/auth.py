@@ -4,13 +4,15 @@ from flask import  jsonify, current_app
 from ...admin import Admin, admin_schema
 from ...author import Author, author_schema
 from ...moderator import Moderator, moderator_schema
-from ...extensions import db
+from ...extensions import db, url_serializer
 from ...helpers.blueprint_helpers import validate_user_data
 import json
 import jwt
 from ...models.models import user_schema
 import datetime
 from ..models import BlacklistToken
+from ...suspend.models import Suspend
+from itsdangerous import BadSignature, BadTimeSignature, SignatureExpired
     
 
 def create_author(moderator_data: dict, profile_pic):
@@ -182,6 +184,9 @@ def log_in_user(user_id: str, role: str, user_data: dict):
         cls = Moderator
     if not cls.user_with_id_exists(int(user_id)):
         raise ValueError(f"There is no {role} with id {user_id}")
+    if role == 'author':
+        if Suspend.is_suspended(int(user_id)):
+            raise ValueError('You are currently suspended')
     if not user_data:
         raise ValueError(f"The {role} data cannot be empty.")
 
@@ -276,7 +281,6 @@ def logout_user(user_id: str, role: str, token: str) -> dict:
         cls = Moderator
     if not cls.user_with_id_exists(int(user_id)):
         raise ValueError(f"The {role} with id {user_id} does not exist1")
-    print('got here')
     return save_token(token)
 
 
@@ -288,3 +292,58 @@ def handle_logout_user(user_id: str, role: str, token: str) -> dict:
         return jsonify({"error": str(e)}), 400
     else:
         return log_out_data
+
+
+def activate_account(email: str, cls):
+    """Activate a user account."""
+    user = cls.query.filter_by(email_address=email).first()
+    user.is_active = True
+    db.session.commit()
+    return jsonify({"Email confirmed": email}), 200
+
+
+def confirm_email(user_id: str, token: str, role: str) -> dict:
+    """Confrim user account."""
+    cls = None
+    if not role:
+        raise ValueError("The user role must be provided!")
+    if not isinstance(role, str):
+        raise TypeError("The user role must be a string")
+    if role == 'author':
+        cls = Author
+    elif role == 'admin':
+        cls = Admin
+    else:
+        cls = Moderator
+    if not user_id:
+        raise ValueError("The user id has to be provided!")
+    if not isinstance(user_id, str):
+        raise TypeError("The user id has to be a string!")
+    if not token:
+        raise ValueError("The token has to be provided!")
+    if not isinstance(token, str):
+        raise TypeError("The token has to be a string!")
+    if not cls.user_with_id_exists(int(user_id)):
+        raise ValueError(f"The {role} with id {user_id} does not exist1")
+    email = url_serializer.loads(token, salt="somesalt", max_age=60)
+    
+    if not cls.validate_user(int(user_id), email):
+        raise ValueError(
+            f'The {role} with email {email} and id {user_id} does not exist!'
+        )
+
+    return activate_account(email)
+
+
+def handle_email_confirm_request(user_id: str, token: str, role: str) -> dict:
+    """Handle the GET request to /api/v1/mail/conrfim."""
+    try:
+        confirm_data = confirm_email(user_id, token, role)
+    except SignatureExpired as e:
+        return jsonify({"error": str(e)}), 400
+    except BadTimeSignature as e:
+        return jsonify({"error": str(e)}), 400
+    except (ValueError, TypeError) as e:
+        return jsonify({"error": str(e)}), 400
+    else:
+        return confirm_data

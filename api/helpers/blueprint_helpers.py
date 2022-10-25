@@ -12,6 +12,7 @@ def validate_user_data(user_data: dict, profile_pic):
         "Email Address",
         "Nickname",
         "Password",
+        "Bio"
     ]
     for key in user_data.keys():
         if key not in valid_keys:

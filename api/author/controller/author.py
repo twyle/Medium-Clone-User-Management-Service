@@ -93,8 +93,8 @@ def update_author(author_id: str, author_data: dict, profile_pic):
     if "Bio" in author_data.keys():
         Author.validate_bio(author_data['Bio'])
         author.bio = author_data['Bio']
-    # db.session.add(author)
-    # db.session.commit()
+    db.session.add(author)
+    db.session.commit()
 
     return author_schema.dumps(author), 201
 

@@ -8,7 +8,8 @@ from .controller import (
     handle_create_author,
     handle_create_moderator,
     handle_log_in_user, 
-    handle_logout_user
+    handle_logout_user,
+    handle_email_confirm_request
 )
 
 auth = Blueprint("auth", __name__)
@@ -66,19 +67,10 @@ def logout():
     return handle_logout_user(request.args.get("id"), request.args.get("role"), token)
 
 
-@auth.route("/refresh_token", methods=["POST"])
-@swag_from("./docs/refresh_token.yml", endpoint="auth.refresh", methods=["POST"])
-def refresh():
-    """Generate a refresh token."""
-    # return handle_refresh_token(get_jwt_identity())
-    return jsonify({"Hello": "Here is the refresh token"})
-
-
 @auth.route("/confirm_email", methods=["GET"])
 @swag_from("./docs/confirm.yml", endpoint="auth.confirm_email", methods=["GET"])
 def confirm_email():
     """Handle email confirmation."""
-    # return handle_email_confirm_request(
-    #     request.args.get("id"), request.args.get("token")
-    # )
-    return jsonify({"Hello": "Email confirmed!"})
+    return handle_email_confirm_request(
+        request.args.get("id"), request.args.get("token"), request.args.get("role") 
+    )
