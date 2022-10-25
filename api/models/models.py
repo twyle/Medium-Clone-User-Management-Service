@@ -62,7 +62,7 @@ class User(db.Model):
     @staticmethod
     def validate_email(email):
         """Validate the given name."""
-        is_email_address_format_valid(email)
+        return is_email_address_format_valid(email)
     
     @staticmethod
     def validate_screen_name(screen_name):

@@ -41,7 +41,6 @@ def is_email_address_format_valid(email_address: str) -> bool:
 
     if re.fullmatch(regex, email_address):
         return True
-
     return False
 
 
