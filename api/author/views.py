@@ -10,7 +10,11 @@ from .controller import (
     handle_get_author_followers,
     handle_get_author_follows,
     handle_follow_author,
-    handle_unfollow_author
+    handle_unfollow_author,
+    handle_subscribe_author,
+    handle_unsubscribe_author,
+    handle_get_author_subscribers,
+    handle_get_author_subscribed_to
 )
 
 author = Blueprint("author", __name__)
@@ -74,3 +78,32 @@ def get_follows():
 def get_all_authors():
     """List all authors."""
     return handle_list_authors()
+
+
+@swag_from("./docs/subscribe.yml", endpoint="author.subscribe", methods=["GET"])
+@author.route("/subscribe", methods=["GET"])
+def subscribe():
+    """Subscribe to the author with given id."""
+    return handle_subscribe_author(request.args.get('subscriber id'), request.args.get('subscribe id'))
+
+
+@swag_from("./docs/unsubscribe.yml", endpoint="author.unsubscribe", methods=["GET"])
+@author.route("/unsubscribe", methods=["GET"])
+def unsubscribe():
+    """Unsubscribe from the author with given id."""
+    return handle_unsubscribe_author(request.args.get('subscriber id'), request.args.get('subscribe id'))
+
+
+@swag_from("./docs/author_subscribers.yml", endpoint="author.get_subscribers", methods=["GET"])
+@author.route("/subscribers", methods=["GET"])
+def get_subscribers():
+    """Get author's subscribers."""
+    return handle_get_author_subscribers(request.args.get('id'))
+
+
+@swag_from("./docs/author_subscribed.yml", endpoint="author.get_subscribed_to", methods=["GET"])
+@author.route("/subscribed_to", methods=["GET"])
+def get_subscribed_to():
+    """Get author subscribed_to."""
+    return handle_get_author_subscribed_to(request.args.get('id'))
+

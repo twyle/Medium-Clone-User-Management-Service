@@ -2,7 +2,11 @@
 """This module contains all the email sending routes."""
 from flasgger import swag_from
 from flask import Blueprint, request
-from .controller import handle_send_confirm_email, handle_send_reset_password_email
+from .controller import (
+    handle_send_confirm_email,
+    handle_send_reset_password_email,
+    handle_send_subscribers_email
+)
 
 mail = Blueprint("mail", __name__)
 
@@ -23,3 +27,14 @@ def send_confirm_mail():
 def send_reset_password_mail():
     """Send the reset password mail."""
     return handle_send_reset_password_email(request.args.get("id"), request.args.get("role"), request.json)
+
+
+@mail.route("/send_subscribers_email", methods=["GET"])
+@swag_from(
+    "./docs/subscribers_email.yml",
+    endpoint="mail.send_subscribers_email",
+    methods=["GET"],
+)
+def send_subscribers_email():
+    """Send the reset password mail."""
+    return handle_send_subscribers_email(request.args.get("id"))

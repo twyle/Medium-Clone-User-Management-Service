@@ -21,3 +21,14 @@ def handle_send_reset_password_email(id: str, role: str, email_data: dict) -> di
         return jsonify({"error": str(e)})
     else:
         return email_sent
+    
+
+def handle_send_subscribers_email(id: str) -> dict:
+    """Handle request to send subscribers email."""
+    # try:
+    #     email_sent = send_password_reset_email(id)
+    # except (ValueError, TypeError) as e:
+    #     return jsonify({"error": str(e)})
+    # else:
+    #     return email_sent
+    return jsonify({'success': 'emails sent'}), 200

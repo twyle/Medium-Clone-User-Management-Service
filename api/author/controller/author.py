@@ -161,24 +161,24 @@ def handle_get_author_follows(author_id: str):
         return author_follows
 
 
-def follow_author(follow_id: str, to_be_followed_id: str):
+def follow_author(follow_id: str, subscribe_id: str):
     """Handle follow an author"""
     if not follow_id:
         raise ValueError('The author follower id has to be provided')
-    if not to_be_followed_id:
+    if not subscribe_id:
         raise ValueError('The author follow id has to be provided')
-    if not isinstance(to_be_followed_id, str):
+    if not isinstance(subscribe_id, str):
         raise TypeError('The author follower id has to be a string')
     if not isinstance(follow_id, str):
         raise TypeError('The author follow id has to be a string.')
     if not Author.user_with_id_exists(int(follow_id)):
         raise ValueError(f'The author with id {follow_id} does not exist')
-    if not Author.user_with_id_exists(int(to_be_followed_id)):
-        raise ValueError(f'The author with id {to_be_followed_id} does not exist')
-    if follow_id == to_be_followed_id:
+    if not Author.user_with_id_exists(int(subscribe_id)):
+        raise ValueError(f'The author with id {subscribe_id} does not exist')
+    if follow_id == subscribe_id:
         raise ValueError('You cannot follow yourself')
     
-    return jsonify(Author.follow(int(follow_id), int(to_be_followed_id)))
+    return jsonify(Author.follow(int(follow_id), int(subscribe_id)))
 
 def handle_follow_author(follower_id: str, follow_id: str):
     """Follow an author."""
@@ -215,3 +215,105 @@ def handle_unfollow_author(follower_id: str, follow_id: str):
     except (ValueError, TypeError) as e:
         return jsonify({"error": str(e)}), 400
     return unfollow_data
+
+
+def subscribe_author(subscriber_id: str, subscribe_id: str):
+    """Handle follow an author"""
+    if not subscriber_id:
+        raise ValueError('The author follower id has to be provided')
+    if not subscribe_id:
+        raise ValueError('The author follow id has to be provided')
+    if not isinstance(subscribe_id, str):
+        raise TypeError('The author follower id has to be a string')
+    if not isinstance(subscriber_id, str):
+        raise TypeError('The author follow id has to be a string.')
+    if not Author.user_with_id_exists(int(subscriber_id)):
+        raise ValueError(f'The author with id {subscriber_id} does not exist')
+    if not Author.user_with_id_exists(int(subscribe_id)):
+        raise ValueError(f'The author with id {subscribe_id} does not exist')
+    if subscriber_id == subscribe_id:
+        raise ValueError('You cannot follow yourself')
+    
+    return jsonify(Author.subscribe(int(subscriber_id), int(subscribe_id)))
+
+
+def handle_subscribe_author(subscriber_id: str, subscribe_id: str):
+    """Follow an author."""
+    try:
+        subscribe = subscribe_author(subscriber_id, subscribe_id)
+    except (ValueError, TypeError) as e:
+        return jsonify({"error": str(e)}), 400
+    return subscribe
+
+
+def unsubscribe_author(subscriber_id: str, subscribe_id: str):
+    """Handle follow an author"""
+    if not subscriber_id:
+        raise ValueError('The author follower id has to be provided')
+    if not subscribe_id:
+        raise ValueError('The author follow id has to be provided')
+    if not isinstance(subscribe_id, str):
+        raise TypeError('The author follower id has to be a string')
+    if not isinstance(subscriber_id, str):
+        raise TypeError('The author follow id has to be a string.')
+    if not Author.user_with_id_exists(int(subscriber_id)):
+        raise ValueError(f'The author with id {subscribe_id} does not exist')
+    if not Author.user_with_id_exists(int(subscribe_id)):
+        raise ValueError(f'The author with id {subscribe_id} does not exist')
+    if subscriber_id == subscribe_id:
+        raise ValueError('You cannot unsubscribe from yourself')
+    
+    return jsonify(Author.unsubscribe(int(subscriber_id), int(subscribe_id)))
+
+
+def handle_unsubscribe_author(subscriber_id: str, subscribe_id: str):
+    """Follow an author."""
+    try:
+        unsubscribe = unsubscribe_author(subscriber_id, subscribe_id)
+    except (ValueError, TypeError) as e:
+        return jsonify({"error": str(e)}), 400
+    return unsubscribe
+
+
+def get_author_subscribers(author_id: str) -> dict:
+    """Get the authors followers."""
+    if not author_id:
+        raise ValueError("The author_id has to be provided.")
+    if not isinstance(author_id, str):
+        raise TypeError("The author_id has to be a string.")
+    if not Author.user_with_id_exists(int(author_id)):
+        raise ValueError(f"The author with id {author_id} does not exist.")
+
+    return authors_schema.dump( Author.get_subscriberss(int(author_id)) ), 200 
+
+
+def handle_get_author_subscribers(author_id: str):
+    """Get an author's followers."""
+    try:
+        author_subscribers = get_author_subscribers(author_id)
+    except (ValueError, TypeError) as e:
+        return jsonify({"error": str(e)}), 400
+    else:
+        return author_subscribers
+
+
+def get_author_subscribes_to(author_id: str) -> dict:
+    """Get the authors follows."""
+    if not author_id:
+        raise ValueError("The author_id has to be provided.")
+    if not isinstance(author_id, str):
+        raise TypeError("The author_id has to be a string.")
+    if not Author.user_with_id_exists(int(author_id)):
+        raise ValueError(f"The user with id {author_id} does not exist.")
+  
+    return authors_schema.dump( Author.get_subscribed_to(int(author_id)) ), 200
+
+
+def handle_get_author_subscribed_to(author_id: str):
+    """Get an author's follows."""
+    try:
+        author_subscribes_to = get_author_subscribes_to(author_id)
+    except (ValueError, TypeError) as e:
+        return jsonify({"error": str(e)}), 400
+    else:
+        return author_subscribes_to

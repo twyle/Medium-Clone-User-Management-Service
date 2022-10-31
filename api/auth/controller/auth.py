@@ -234,7 +234,7 @@ def log_in_user(user_id: str, role: str, user_data: dict):
     user = cls.query.filter_by(email_address=user_data["email"]).first()
     if user:
         if user.check_password(user_data["password"]):
-            if not user.is_active:
+            if user.is_active:
                 user_data = {
                     f"{role} profile": json.loads(user_schema.dumps(user)),
                     "access token": create_access_token(user.id, role),
