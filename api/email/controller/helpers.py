@@ -5,6 +5,9 @@ from ...admin.model import Admin
 from ...moderator.model import Moderator
 from ...author.model import Author
 from ...tasks import celery_send_email
+from flask_mail import Message
+
+from ...extensions import mail
     
 
 def send_confirm_email(user_id: str, role: str, email_data: dict) -> dict:
@@ -128,3 +131,17 @@ def send_password_reset_email(id: str, role: str, email_data: dict) -> dict:
     #     202,
     # )
     return jsonify({'success': f'Password Reset Email sent to {email_data["email"]}'})
+
+
+def send_email(sender, to):
+    msg = Message('[Subscriber]',
+    sender=sender, recipients=[to])
+    msg.body = "Email body"
+    mail.send(msg)
+
+
+def send_subscriber_emails(sender, emails) -> dict:
+    """Send password reset email."""
+    for email in emails:
+        send_email(sender, email)
+    return jsonify({'success': f'{sender} emails sent.'})
