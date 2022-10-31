@@ -13,12 +13,13 @@ import datetime
 from ..models import BlacklistToken
 from ...suspend.models import Suspend
 from itsdangerous import BadSignature, BadTimeSignature, SignatureExpired
+from .helpers import handle_upload_image
     
 
-def create_author(moderator_data: dict, profile_pic):
+def create_author(moderator_data: dict, profile_pic_data):
     """Handle the post request to create a new author."""
     
-    validate_user_data(moderator_data, profile_pic)
+    validate_user_data(moderator_data, profile_pic_data)
     
     Author.validate_name(moderator_data['First Name'])
     Author.validate_name(moderator_data['Last Name'])
@@ -43,6 +44,11 @@ def create_author(moderator_data: dict, profile_pic):
         Author.validate_screen_name(moderator_data['Nickname'])
         author.screen_name = moderator_data["Nickname"]
         
+    if profile_pic_data:
+        if profile_pic_data["Profile Picture"]:
+            profile_pic = handle_upload_image(profile_pic_data["Profile Picture"])
+            author.profile_picture = profile_pic
+        
     db.session.add(author)
     db.session.commit()
 
@@ -58,10 +64,10 @@ def handle_create_author(moderator_data: dict, profile_pic):
     else:
         return author
     
-def create_admin(admin_data: dict, profile_pic):
+def create_admin(admin_data: dict, profile_pic_data):
     """Handle the post request to create a new Admin."""
     
-    validate_user_data(admin_data, profile_pic)
+    validate_user_data(admin_data, profile_pic_data)
     
     Admin.validate_name(admin_data['First Name'])
     Admin.validate_name(admin_data['Last Name'])
@@ -83,6 +89,11 @@ def create_admin(admin_data: dict, profile_pic):
         Admin.validate_screen_name(admin_data['Nickname'])
         admin.screen_name = admin_data["Nickname"]
         
+    if profile_pic_data:
+        if profile_pic_data["Profile Picture"]:
+            profile_pic = handle_upload_image(profile_pic_data["Profile Picture"])
+            admin.profile_picture = profile_pic
+        
     db.session.add(admin)
     db.session.commit()
 
@@ -98,10 +109,10 @@ def handle_create_admin(admin_data: dict, profile_pic):
         return admin
     
     
-def create_moderator(moderator_data: dict, profile_pic):
+def create_moderator(moderator_data: dict, profile_pic_data):
     """Handle the post request to create a new Moderator."""
     
-    validate_user_data(moderator_data, profile_pic)
+    validate_user_data(moderator_data, profile_pic_data)
     
     Moderator.validate_name(moderator_data['First Name'])
     Moderator.validate_name(moderator_data['Last Name'])
@@ -126,6 +137,11 @@ def create_moderator(moderator_data: dict, profile_pic):
     if 'Bio' in moderator_data.keys():
         Moderator.validate_bio(moderator_data["Bio"])
         moderator.bio = moderator_data["Bio"]
+        
+    if profile_pic_data:
+        if profile_pic_data["Profile Picture"]:
+            profile_pic = handle_upload_image(profile_pic_data["Profile Picture"])
+            moderator.profile_picture = profile_pic
         
     db.session.add(moderator)
     db.session.commit()

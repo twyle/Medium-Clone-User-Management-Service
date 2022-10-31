@@ -3,6 +3,8 @@
 from ..model import Admin, admin_schema, admins_schema
 from flask import jsonify
 from ...extensions import db
+from ...auth.controller.helpers import handle_upload_image
+from ...tasks import delete_file_s3
 
 
 def get_admin(admin_id: str) -> dict:
@@ -60,9 +62,7 @@ def update_admin(admin_id: str, admin_data: dict, profile_pic):
     if not isinstance(admin_id, str):
         raise ValueError("The admin_id has to be a string.")
     if not Admin.user_with_id_exists(int(admin_id)):
-        raise ValueError(f"The user with id {admin_id} does not exist.")
-    if not admin_data:
-        raise ValueError("The user data cannot be empty.")
+        raise ValueError(f"The admin with id {admin_id} does not exist.")
     if not isinstance(admin_data, dict):
         raise TypeError("user_data must be a dict")
     valid_keys = [
@@ -73,7 +73,6 @@ def update_admin(admin_id: str, admin_data: dict, profile_pic):
     ]
     for key in admin_data.keys():
         if key not in valid_keys:
-            print(key)
             raise ValueError(f"The only valid keys are {valid_keys}")
     
     admin = Admin.get_user(int(admin_id))
@@ -92,6 +91,11 @@ def update_admin(admin_id: str, admin_data: dict, profile_pic):
     if "Nickname" in admin_data.keys():
         Admin.validate_screen_name(admin_data['Nickname'])
         admin.screen_name = admin_data['Nickname']
+    if profile_pic["Profile Picture"]:
+        # if author.profile_picture:
+        #     delete_file_s3.delay(os.path.basename(author.profile_picture))
+        profile_pic = handle_upload_image(profile_pic["Profile Picture"])
+        admin.profile_picture = profile_pic
         
     db.session.add(admin)
     db.session.commit()

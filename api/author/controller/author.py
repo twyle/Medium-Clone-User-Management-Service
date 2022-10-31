@@ -4,6 +4,8 @@ from api.models.models import User
 from ..model import Author, authors_schema, author_schema
 from flask import jsonify
 from ...extensions import db
+from ...auth.controller.helpers import handle_upload_image
+from ...tasks import delete_file_s3
 
 
 def handle_list_authors():
@@ -59,8 +61,6 @@ def update_author(author_id: str, author_data: dict, profile_pic):
         raise ValueError("The author_id has to be a string.")
     if not Author.user_with_id_exists(int(author_id)):
         raise ValueError(f"The user with id {author_id} does not exist.")
-    if not author_data:
-        raise ValueError("The user data cannot be empty.")
     if not isinstance(author_data, dict):
         raise TypeError("user_data must be a dict")
     valid_keys = [
@@ -93,6 +93,13 @@ def update_author(author_id: str, author_data: dict, profile_pic):
     if "Bio" in author_data.keys():
         Author.validate_bio(author_data['Bio'])
         author.bio = author_data['Bio']
+        
+    if profile_pic["Profile Picture"]:
+        # if author.profile_picture:
+        #     delete_file_s3.delay(os.path.basename(author.profile_picture))
+        profile_pic = handle_upload_image(profile_pic["Profile Picture"])
+        author.profile_picture = profile_pic
+        
     db.session.add(author)
     db.session.commit()
 

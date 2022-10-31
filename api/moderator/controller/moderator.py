@@ -5,6 +5,8 @@
 from ..model import Moderator, moderator_schema, moderators_schema
 from flask import jsonify
 from ...extensions import db
+from ...auth.controller.helpers import handle_upload_image
+from ...tasks import delete_file_s3
 
 
 def get_moderator(moderator_id: str) -> dict:
@@ -62,9 +64,7 @@ def update_moderator(moderator_id: str, moderator_data: dict, profile_pic):
     if not isinstance(moderator_id, str):
         raise ValueError("The moderator_id has to be a string.")
     if not Moderator.user_with_id_exists(int(moderator_id)):
-        raise ValueError(f"The user with id {moderator_id} does not exist.")
-    if not moderator_data:
-        raise ValueError("The user data cannot be empty.")
+        raise ValueError(f"The moderator with id {moderator_id} does not exist.")
     if not isinstance(moderator_data, dict):
         raise TypeError("user_data must be a dict")
     valid_keys = [
@@ -76,7 +76,6 @@ def update_moderator(moderator_id: str, moderator_data: dict, profile_pic):
     ]
     for key in moderator_data.keys():
         if key not in valid_keys:
-            print(key)
             raise ValueError(f"The only valid keys are {valid_keys}")
     
     moderator = Moderator.get_user(int(moderator_id))
@@ -98,6 +97,11 @@ def update_moderator(moderator_id: str, moderator_data: dict, profile_pic):
     if "Bio" in moderator_data.keys():
         Moderator.validate_bio(moderator_data['Bio'])
         moderator.bio = moderator_data['Bio']
+    if profile_pic["Profile Picture"]:
+        # if author.profile_picture:
+        #     delete_file_s3.delay(os.path.basename(author.profile_picture))
+        profile_pic = handle_upload_image(profile_pic["Profile Picture"])
+        moderator.profile_picture = profile_pic
         
     db.session.add(moderator)
     db.session.commit()

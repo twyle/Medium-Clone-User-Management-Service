@@ -30,7 +30,7 @@ class ModeratorSchema(ma.Schema):
             "screen_name",
             "email",
             "date_registered",
-            "profile_pic",
+            "profile_picture",
             "bio",
         )
 

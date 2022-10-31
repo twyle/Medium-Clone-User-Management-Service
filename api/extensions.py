@@ -9,6 +9,7 @@ from itsdangerous import URLSafeTimedSerializer
 from celery import Celery
 from flask_mail import Mail
 import os
+import boto3
 
 
 db = SQLAlchemy()
@@ -18,6 +19,12 @@ cors = CORS()
 bcrypt = Bcrypt()
 mail = Mail()
 url_serializer = URLSafeTimedSerializer(os.getenv("SECRET_KEY", "secret-key"))
+
+s3 = boto3.client(
+   "s3",
+   aws_access_key_id=os.environ['AWS_ACCESS_KEY'],
+   aws_secret_access_key=os.environ['AWS_ACCESS_SECRET']
+)
 
 def make_celery():
     """Create the celery extension."""

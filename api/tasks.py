@@ -1,7 +1,8 @@
 # -*- coding: utf-8 -*-
 """Declare the celery tasks."""
-from .extensions import celery
+from .extensions import celery, s3
 from .email import EmailMessage
+from flask import current_app
 
 
 @celery.task(name="send_email")
@@ -17,3 +18,23 @@ def celery_send_email(
     )
 
     return email_message.send_message()
+
+
+@celery.task(name="delete_image")
+def delete_file_s3(filename):
+    """Delete profile pic."""
+    s3.delete_object(
+        Bucket=current_app.config["S3_BUCKET"], Key=filename
+    )
+
+
+@celery.task(name="upload_image")
+def upload_file_to_s3(filename):
+    """Upload a file to S3."""
+    #open filename
+    opened_file = filename
+
+    s3.upload_fileobj(opened_file, current_app.config['S3_BUCKET'], filename)
+
+    data = f"{current_app.config['S3_LOCATION']}{filename}"
+    return {"image": data}

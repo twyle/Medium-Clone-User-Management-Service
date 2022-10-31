@@ -25,7 +25,7 @@ class AdminSchema(ma.Schema):
             "screen_name",
             "email",
             "date_registered",
-            "profile_pic",
+            "profile_picture",
         )
         
 admin_schema = AdminSchema()
