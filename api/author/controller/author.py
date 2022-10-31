@@ -6,6 +6,7 @@ from flask import jsonify
 from ...extensions import db
 from ...auth.controller.helpers import handle_upload_image
 from ...tasks import delete_file_s3
+import os
 
 
 def handle_list_authors():
@@ -96,7 +97,8 @@ def update_author(author_id: str, author_data: dict, profile_pic):
         
     if profile_pic["Profile Picture"]:
         # if author.profile_picture:
-        #     delete_file_s3.delay(os.path.basename(author.profile_picture))
+        #     # delete_file_s3.delay(os.path.basename(author.profile_picture))
+        #     # delete_file_s3(os.path.basename(author.profile_picture))
         profile_pic = handle_upload_image(profile_pic["Profile Picture"])
         author.profile_picture = profile_pic
         

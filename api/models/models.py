@@ -6,6 +6,7 @@ from .helpers import (
     is_email_address_format_valid,
     check_if_email_id_match
 )
+from ..tasks import delete_file_s3
 
 
 class User(db.Model):
@@ -92,6 +93,9 @@ class User(db.Model):
     def delete_user(cls, user_id: int):
         """Delete a user."""
         user = cls.query.filter_by(id=user_id).first()
+        if user.profile_picture:
+            # delete_file_s3.delay(os.path.basename(author.profile_picture))
+            delete_file_s3(os.path.basename(user.profile_picture))
         db.session.delete(user)
         db.session.commit()
         return user

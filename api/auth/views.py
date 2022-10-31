@@ -9,7 +9,9 @@ from .controller import (
     handle_create_moderator,
     handle_log_in_user, 
     handle_logout_user,
-    handle_email_confirm_request
+    handle_email_confirm_request,
+    handle_get,
+    handle_post
 )
 
 auth = Blueprint("auth", __name__)
@@ -44,13 +46,16 @@ def register_moderator():
     return handle_create_moderator(request.form, request.files)
 
 
-@auth.route("/reset_password", methods=["POST"])
+@auth.route("/reset_password", methods=["POST", "GET"])
 @swag_from(
-    "./docs/password_reset.yml", endpoint="auth.reset_password", methods=["POST"]
+    "./docs/password_reset.yml", endpoint="auth.reset_password", methods=["POST", "GET"]
 )
 def reset_password():
     """Reset admin password."""
-    return jsonify({"auth": "reset password"}), 200
+    if request.method == "GET":
+        return handle_get(request.args.get('id'), request.args.get('token'), request.args.get('role'))
+    elif request.method == "POST":
+        return handle_post(request.args.get('id'), request.args.get('token'), request.args.get('role'), request.json)
 
 
 @auth.route("/login", methods=["POST"])
@@ -63,7 +68,6 @@ def login():
 @swag_from("./docs/logout_user.yml", endpoint="auth.logout", methods=["POST"])
 def logout():
     token = request.headers.get('Authorization').split()[1]
-    print(token)
     return handle_logout_user(request.args.get("id"), request.args.get("role"), token)
 
 

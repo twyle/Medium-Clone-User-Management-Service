@@ -348,7 +348,7 @@ def confirm_email(user_id: str, token: str, role: str) -> dict:
             f'The {role} with email {email} and id {user_id} does not exist!'
         )
 
-    return activate_account(email)
+    return activate_account(email, cls)
 
 
 def handle_email_confirm_request(user_id: str, token: str, role: str) -> dict:
@@ -363,3 +363,117 @@ def handle_email_confirm_request(user_id: str, token: str, role: str) -> dict:
         return jsonify({"error": str(e)}), 400
     else:
         return confirm_data
+    
+
+def get_password_reset_token(user_id: str, token: str, role: str):
+    cls = None
+    if not role:
+        raise ValueError("The user role must be provided!")
+    if not isinstance(role, str):
+        raise TypeError("The user role must be a string")
+    if role == 'author':
+        cls = Author
+    elif role == 'admin':
+        cls = Admin
+    else:
+        cls = Moderator
+    if not user_id:
+        raise ValueError("The user id has to be provided")
+    if not isinstance(user_id, str):
+        raise TypeError("The user id has to be a string")
+    if not cls.user_with_id_exists(int(user_id)):
+        raise ValueError(f"The {role} with id {user_id} does not exist1")
+    if not token:
+        raise ValueError("The password reset token must be provided!")
+    if not isinstance(token, str):
+        raise ValueError("The password reset token must be a string!")  
+    
+    return jsonify({"Password reset token": token}), 200
+
+def handle_get(user_id: str, token: str, role: str):
+    """Handle get rquest to change password"""
+    try:
+        t = get_password_reset_token(user_id, token, role)
+    except (ValueError, TypeError) as e:
+        return jsonify({"error": str(e)}), 400
+    else:
+        return t
+    
+    
+def get_user_email(token: str) -> dict:
+    """Get a useremail given a token."""
+    try:
+        email = url_serializer.loads(token, salt="somesalt", max_age=300)
+    except SignatureExpired as e:
+        raise e
+    except BadTimeSignature as e:
+        raise e
+    except BadSignature as e:
+        raise e
+    else:
+        return email    
+    
+
+def update_password(email: str, password: str, cls, role):
+    """Update the user password."""
+    if not cls.user_with_email_exists(email):
+        raise ValueError(
+            f'The {role} with email {email} does not exist!'
+        )
+    cls.validate_password(password)
+    user = cls.query.filter_by(email_address=email).first()
+    user.password = password
+    db.session.commit()
+    return jsonify({"Success": f"Password reset for {email}"}), 200
+    
+    
+def reset_password(user_id: str, token: str, role: str, user_passwrd: dict):
+    cls = None
+    if not role:
+        raise ValueError("The user role must be provided!")
+    if not isinstance(role, str):
+        raise TypeError("The user role must be a string")
+    if role == 'author':
+        cls = Author
+    elif role == 'admin':
+        cls = Admin
+    else:
+        cls = Moderator
+    if not user_id:
+        raise ValueError("The user id has to be provided")
+    if not isinstance(user_id, str):
+        raise TypeError("The user id has to be a string")
+    if not cls.user_with_id_exists(int(user_id)):
+        raise ValueError(f"The {role} with id {user_id} does not exist1")
+    if not token:
+        raise ValueError("The password reset token must be provided!")
+    if not isinstance(token, str):
+        raise ValueError("The password reset token must be a string!")  
+    if not user_passwrd:
+        raise ValueError("The password must be provided!")
+    if not isinstance(user_passwrd, dict):
+        raise TypeError("The user password data must be in a dict")
+    if "password" not in user_passwrd.keys():
+        raise ValueError("The password key must be in the password data!")
+    if not user_passwrd["password"]:
+        raise ValueError("The new password cannot be empty!")
+
+    email = get_user_email(token)
+
+    if not cls.validate_user(int(user_id), email):
+        raise ValueError(
+            f'The {role} with email {email} and id {user_id} does not exist!'
+        )
+
+    return update_password(email, user_passwrd["password"], cls, role)
+       
+    
+
+def handle_post(user_id: str, token: str, role: str, password_data):
+    """Handle get rquest to change password"""
+    try:
+        t = reset_password(user_id, token, role, password_data)
+    except (ValueError, TypeError) as e:
+        return jsonify({"error": str(e)}), 400
+    else:
+        return t

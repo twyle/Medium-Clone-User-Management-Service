@@ -1,5 +1,7 @@
 from flask import current_app
 from werkzeug.utils import secure_filename
+import os
+from ...tasks import upload_file_to_s3
 
 
 def allowed_file(filename: str) -> bool:
@@ -18,8 +20,10 @@ def upload_image(file):
         raise TypeError("That file type is not allowed!")
 
     filename = secure_filename(file.filename)
+    file.save(os.path.join(current_app.config['UPLOAD_FOLDER'], filename))
 
-    # upload_file_to_s3.delay(filenamepath)
+    # upload_file_to_s3.delay(filename)
+    upload_file_to_s3(filename)
 
     profile_pic = f"{current_app.config['S3_LOCATION']}{filename}"
 

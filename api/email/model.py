@@ -16,13 +16,14 @@ class EmailMessage:
     toke: str
 
     def __init__(
-        self, user_id: str, email_title: str, api_email_link: str, email_address: str
+        self, user_id: str, email_title: str, api_email_link: str, email_address: str, role: str
     ) -> None:
         """Create an email message."""
         self.user_id = (user_id,)
         self.email_title = email_title
         self.email_address = email_address
         self.api_email_link = api_email_link
+        self.role = role
 
         self._create_token()
         self._create_link()
@@ -35,7 +36,7 @@ class EmailMessage:
     def _create_link(self):
         """Create the email link."""
         self.link = url_for(
-            self.api_email_link, id=self.user_id, token=self.token, _external=True
+            self.api_email_link, id=self.user_id, token=self.token, role=self.role, _external=True
         )
 
     def _create_message(self):

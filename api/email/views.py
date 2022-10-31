@@ -11,7 +11,7 @@ mail = Blueprint("mail", __name__)
 @swag_from("./docs/send.yml", endpoint="mail.send_confirm_mail", methods=["POST"])
 def send_confirm_mail():
     """Send the confirm account email."""
-    return handle_send_confirm_email(request.args.get("id"), request.args.get("id"), request.json)
+    return handle_send_confirm_email(request.args.get("id"), request.args.get("role"), request.json)
 
 
 @mail.route("/send_reset_password_email", methods=["POST"])
@@ -22,4 +22,4 @@ def send_confirm_mail():
 )
 def send_reset_password_mail():
     """Send the reset password mail."""
-    return handle_send_reset_password_email(request.args.get("id"), request.args.get("id"), request.json)
+    return handle_send_reset_password_email(request.args.get("id"), request.args.get("role"), request.json)
