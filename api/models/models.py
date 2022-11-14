@@ -13,7 +13,7 @@ class User(db.Model):
     """The User Model."""
 
     __abstract__ = True
-    first_name: str = db.Column(db.String(100), nullable=False)
+    first_name: str = db.Column(db.String(100), nullable=False) 
     last_name: str = db.Column(db.String(100), nullable=False)
     email_address: str = db.Column(db.Text, nullable=False, unique=True)
     profile_picture: str = db.Column(db.String(100), nullable=True)
