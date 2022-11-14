@@ -194,6 +194,15 @@ Here is how to set up the application locally:
         | 'api/v1/author'           | PUT     | Update author info.           |
         | 'api/v1/author'           | GET     | Get a author's info.          |
         | 'api/v1/authors'          | GET     | List all authors.             |
+
+        | 'api/v1/author/follow'           | GET     | Follow an author.         |
+        | 'api/v1/author/followers'           | GET     | Get an authors followers.         |
+        | 'api/v1/author/follows'           | GET     | A list of author this author follows.         |
+        | 'api/v1/author/subscribe'           | GET     | Subscribe to an author.   
+        | 'api/v1/author/subscribed_to'           | GET     | Find an authors subscribes.      |
+        | 'api/v1/author/subscribers'           | GET     | Get anauthors subscribers.
+        | 'api/v1/author/unfollow'           | GET     | Unfollow an author. |
+        | 'api/v1/author/unsubscribe'           | GET     |Unsubscribe to an author.|
         | 'api/v1/admin'           | DELETE  | Delete a admin.              |
         | 'api/v1/admin'           | PUT     | Update admin info.           |
         | 'api/v1/admin'           | GET     | Get a admins info.          |
