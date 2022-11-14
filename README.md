@@ -190,10 +190,10 @@ Here is how to set up the application locally:
         | 'api/v1/auth/logout'    | POST    | Logout as a logged in user. |
         | 'api/v1/auth/confirm_email'   | GET     | Confirm email address.      |
         | 'api/v1/auth/reset_password'      | POST    | Reset password .      |
-        | 'api/v1/user'           | DELETE  | Delete a user.              |
-        | 'api/v1/user'           | PUT     | Update user info.           |
-        | 'api/v1/user'           | GET     | Get a user's info.          |
-        | 'api/v1/users'          | GET     | List all users.             |
+        | 'api/v1/author'           | DELETE  | Delete a author.              |
+        | 'api/v1/author'           | PUT     | Update author info.           |
+        | 'api/v1/author'           | GET     | Get a author's info.          |
+        | 'api/v1/authors'          | GET     | List all authors.             |
         | 'api/v1/admin'           | DELETE  | Delete a admin.              |
         | 'api/v1/admin'           | PUT     | Update admin info.           |
         | 'api/v1/admin'           | GET     | Get a admins info.          |
