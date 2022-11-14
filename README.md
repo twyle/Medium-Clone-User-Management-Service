@@ -20,7 +20,7 @@
   <img title="Bandit badge" alt="Bandit badge" src="https://img.shields.io/badge/gunicorn-%298729.svg?style=flat&logo=gunicorn&logoColor=white" />
 </p>
 
-![](assets/images/medium_clone_user_management_system.png)
+![](media/images/medium_clone_user_management_system.png)
 
 ## Project Overview
 This is a web application that manages the users of a blogging application(A Medium clone). The application enables the various users to register as well as manage their accounts (view, update, delete.) Other functionality includes:
