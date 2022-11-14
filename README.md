@@ -194,7 +194,6 @@ Here is how to set up the application locally:
         | 'api/v1/author'           | PUT     | Update author info.           |
         | 'api/v1/author'           | GET     | Get a author's info.          |
         | 'api/v1/authors'          | GET     | List all authors.             |
-
         | 'api/v1/author/follow'           | GET     | Follow an author.         |
         | 'api/v1/author/followers'           | GET     | Get an authors followers.         |
         | 'api/v1/author/follows'           | GET     | A list of author this author follows.         |
