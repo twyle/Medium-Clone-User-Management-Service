@@ -40,20 +40,6 @@ It's pretty easy to use the application. On the home page (http://localhost:5000
  6. Access other functionalities such as user update, viewing, deletion.
 
 
- ## Features
-
-This application has several features including:
-
-1. Deployed to an AWS EBS using Codedeploy.
-2. Versioned using git and Hosted on GitHub.
-3. Auto-deployed to AWS using AWS CodePipeline.
-4. Uses gunicorn as the application servers.
-5. Uses an Application Load Balancer to redirect traffic to the frontend
-6. Uses AWS SES to send confirmation emails.
-7. Uses JWT to authorize users.
-8. Uses AWS S3 to store images
-9. Uses Celery to upload images to S3 and to send emails.
-
 ## Local Setup
 
 Here is how to set up the application locally:
