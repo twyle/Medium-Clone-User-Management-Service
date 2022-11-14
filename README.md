@@ -164,7 +164,7 @@ Here is how to set up the application locally:
       Head over to http://0.0.0.0:5000/apidocs 
 
  <p align=center>
-  <img src="assets/videos/user-management-service-v3.gif" />
+  <img src="assets/videos/blog-user-management.gif" />
 </p>
 
 ## Development
