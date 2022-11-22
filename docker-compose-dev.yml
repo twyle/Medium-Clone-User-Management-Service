@@ -6,39 +6,51 @@ services:
     volumes:
       - postgres_data_user_service:/var/lib/postgresql/data/
     env_file:
-      - ./database/.env
+      - ./services/database/.env
     ports:
       - 5432:5432 
 
   blog-user-management-service:
     build:
-      context: .
+      context: services/web
       dockerfile: Dockerfile.dev
     volumes:
       - .:/usr/src/app
-    ports:
-      - 5000:5000
+    expose:  # new
+      - 5000
     env_file:
-      - ./.env
+      - ./services/web/.env
     depends_on:
       - db
       - redis
+    labels:  # new
+      - "traefik.enable=true"
+      - "traefik.http.routers.flask.rule=Host(`flask.localhost`)"
 
   celery-worker:
     build:
-      context: .
+      context: services/web
       dockerfile: Dockerfile.dev
     command: celery --app manage.celery worker --loglevel=info
     volumes:
       - .:/usr/src/app
     env_file:
-      - ./.env
+      - ./services/web/.env
     depends_on:
       - blog-user-management-service
       - redis
 
   redis:
     image: redis:6-alpine
+
+  traefik:  # new
+    image: traefik:v2.2
+    ports:
+      - 80:80
+      - 8081:8080
+    volumes:
+      - "./services/traefik/traefik.dev.toml:/etc/traefik/traefik.toml"
+      - "/var/run/docker.sock:/var/run/docker.sock:ro"
 
 volumes:
   postgres_data_user_service:

@@ -6,21 +6,21 @@ services:
     volumes:
       - postgres_data_user_service:/var/lib/postgresql/data/
     env_file:
-      - ./database/.env
+      - ./services/database/.env
     ports:
       - 5432:5432 
     restart: always
 
   blog-user-management-service:
     build:
-      context: .
-      dockerfile: Dockerfile.dev
+      context: services/web
+      dockerfile: Dockerfile.prod
     volumes:
       - .:/usr/src/app
     ports:
       - 5000:5000
     env_file:
-      - ./.env
+      - ./services/web/.env
     depends_on:
       - db
       - redis
@@ -28,13 +28,13 @@ services:
 
   celery-worker:
     build:
-      context: .
-      dockerfile: Dockerfile.dev
+      context: services/web
+      dockerfile: Dockerfile.prod
     command: celery --app manage.celery worker --loglevel=info
     volumes:
       - .:/usr/src/app
     env_file:
-      - ./.env
+      - ./services/web/.env
     depends_on:
       - blog-user-management-service
       - redis

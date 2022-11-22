@@ -37,7 +37,7 @@ deactivate () {
 # unset irrelevant variables
 deactivate nondestructive
 
-VIRTUAL_ENV="/home/lyle/tutorials/sql/venv"
+VIRTUAL_ENV="/home/lyle/projects/Medium-Clone-User-Management-Service/venv"
 export VIRTUAL_ENV
 
 _OLD_VIRTUAL_PATH="$PATH"

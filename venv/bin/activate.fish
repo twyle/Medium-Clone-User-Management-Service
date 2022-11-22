@@ -29,7 +29,7 @@ end
 # unset irrelevant variables
 deactivate nondestructive
 
-set -gx VIRTUAL_ENV "/home/lyle/tutorials/sql/venv"
+set -gx VIRTUAL_ENV "/home/lyle/projects/Medium-Clone-User-Management-Service/venv"
 
 set -gx _OLD_VIRTUAL_PATH $PATH
 set -gx PATH "$VIRTUAL_ENV/bin" $PATH
