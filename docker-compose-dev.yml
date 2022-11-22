@@ -3,9 +3,8 @@ version: '3'
 services:
   db:
     image: postgres
-    restart: always
     volumes:
-      - postgres_data_ecs:/var/lib/postgresql/data/
+      - postgres_data_user_service:/var/lib/postgresql/data/
     env_file:
       - ./database/.env
     ports:
@@ -42,4 +41,4 @@ services:
     image: redis:6-alpine
 
 volumes:
-  postgres_data_ecs:
+  postgres_data_user_service:

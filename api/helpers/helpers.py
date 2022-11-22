@@ -32,3 +32,4 @@ def register_extentions(app):
     bcrypt.init_app(app)
     swagger.init_app(app)
     mail.init_app(app)
+    
