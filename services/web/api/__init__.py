@@ -9,7 +9,7 @@ from .helpers.hooks import (
     log_get_request,
     log_post_request,
 )
-
+import os
 
 def create_app(config_name='default'):
     """Create the flask app."""
@@ -52,8 +52,8 @@ def create_app(config_name='default'):
         
     @app.route('/logs')
     def get_logs():
-        host = request.host_url.split(":")
-        return redirect(f'{host[0]}:{host[1]}:5601')
+        host = os.environ['LOGGER_HOST']
+        return redirect(f'{request.host_url.split(":")[0]}://{host}:5601')
     
     # shell context for flask cli
     app.shell_context_processor({"app": app, "db": db})
