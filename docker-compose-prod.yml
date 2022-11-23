@@ -6,7 +6,7 @@ services:
     volumes:
       - postgres_data_user_service:/var/lib/postgresql/data/
     env_file:
-      - ./services/database/.env
+      - /home/lyle/services/database/.env
     ports:
       - 5432:5432 
     restart: always
@@ -20,7 +20,7 @@ services:
     expose:  # new
       - 5000
     env_file:
-      - ./services/web/.env
+      - /home/lyle/services/web/.env
     depends_on:
       - db
       - redis
@@ -38,7 +38,7 @@ services:
     volumes:
       - .:/usr/src/app
     env_file:
-      - ./services/web/.env
+      - /home/lyle/services/web/.env
     depends_on:
       - blog-user-management-service
       - redis
