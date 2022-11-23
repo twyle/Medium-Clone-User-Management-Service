@@ -9,31 +9,25 @@ services:
       - /home/lyle/api/services/database/.env
     ports:
       - 5432:5432 
-    restart: always
 
   blog-user-management-service:
     build:
       context: services/web
-      dockerfile: Dockerfile.prod
+      dockerfile: Dockerfile.dev
     volumes:
       - .:/usr/src/app
-    expose:  # new
-      - 5000
+    ports:
+      - 5000:5000
     env_file:
       - /home/lyle/api/services/web/.env
     depends_on:
       - db
       - redis
-    restart: always
-    labels:  # new
-      - "traefik.enable=true"
-      - "traefik.http.routers.flask.rule=Host(`flask-traefik.techwithlyle.xyz`)"
-      - "traefik.http.routers.flask.tls=true"
 
   celery-worker:
     build:
       context: services/web
-      dockerfile: Dockerfile.prod
+      dockerfile: Dockerfile.dev
     command: celery --app manage.celery worker --loglevel=info
     volumes:
       - .:/usr/src/app
@@ -42,31 +36,9 @@ services:
     depends_on:
       - blog-user-management-service
       - redis
-    restart: always
 
   redis:
     image: redis:6-alpine
-    restart: always
-
-  traefik:  # new
-    build:
-      context: ./services/traefik
-      dockerfile: Dockerfile.traefik
-    ports:
-      - 80:80
-      - 443:443
-    volumes:
-      - "/var/run/docker.sock:/var/run/docker.sock:ro"
-      - "./traefik-public-certificates:/certificates"
-    labels:
-      - "traefik.enable=true"
-      - "traefik.http.routers.dashboard.rule=Host(`dashboard-flask-traefik.techwithlyle.xyz`)"
-      - "traefik.http.routers.dashboard.tls=true"
-      - "traefik.http.routers.dashboard.tls.certresolver=letsencrypt"
-      - "traefik.http.routers.dashboard.service=api@internal"
-      - "traefik.http.routers.dashboard.middlewares=auth"
-      - "traefik.http.middlewares.auth.basicauth.users=testuser:$$apr1$$jIKW.bdS$$eKXe4Lxjgy/rH65wP1iQe1"
 
 volumes:
   postgres_data_user_service:
-  traefik-public-certificates:

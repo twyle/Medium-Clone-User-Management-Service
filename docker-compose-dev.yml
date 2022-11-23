@@ -16,16 +16,13 @@ services:
       dockerfile: Dockerfile.dev
     volumes:
       - .:/usr/src/app
-    expose:  # new
-      - 5000
+    ports:
+      - 5000:5000
     env_file:
       - ./services/web/.env
     depends_on:
       - db
       - redis
-    labels:  # new
-      - "traefik.enable=true"
-      - "traefik.http.routers.flask.rule=Host(`flask.localhost`)"
 
   celery-worker:
     build:
