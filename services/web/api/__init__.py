@@ -1,4 +1,4 @@
-from flask import Flask, jsonify, request
+from flask import Flask, jsonify, request, redirect
 from .config.config import Config
 from .helpers import register_blueprints, register_extentions
 from .extensions import db
@@ -49,6 +49,11 @@ def create_app(config_name='default'):
     @app.teardown_request
     def log_exception(exc):
         get_exception(exc)
+        
+    @app.route('/logs')
+    def get_logs():
+        host = request.host_url.split(":")
+        return redirect(f'{host[0]}:{host[1]}:5601')
     
     # shell context for flask cli
     app.shell_context_processor({"app": app, "db": db})
